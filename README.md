@@ -44,47 +44,55 @@
 
 ## 📂 项目结构
 
+> ⚠️ `Debug/`（构建输出目录）、生成的 Makefile（`makefile`、`objects.mk`、`sources.mk`、`subdir.mk` 等）、编译产物（`*.o`、`*.elf`、`*.map`、`*.d` 等）以及编辑器/系统临时文件均已通过 `.gitignore` 忽略，不纳入版本管理。克隆仓库后由 STM32CubeIDE 自动生成，无需手动提交。
+
 ```
-CubeIDE/
-├── STM32_Ebed.ioc              # STM32CubeMX 工程配置
+GEMS/                          # 工程根目录
+├── .gitignore                 # Git 忽略规则（构建产物、编辑器/系统临时文件等）
+├── .project                   # CubeIDE 工程描述文件
+├── .cproject                  # CubeIDE C/C++ 构建配置
+├── .mxproject                 # CubeMX 工程元数据
+├── .settings/                 # CubeIDE 工作区设置
+├── STM32_Ebed.ioc             # STM32CubeMX 工程配置
 ├── STM32L431RCTX_FLASH.ld     # 链接脚本
-├── STM32_Ebed Debug.launch     # 调试启动配置
+├── STM32_Ebed Debug.launch    # 调试启动配置
+├── 原理图.pdf                 # 硬件原理图
+├── README.md                  # 项目说明文档
 ├── Core/
-│   ├── Inc/                    # 头文件
-│   │   ├── main.h              # 主程序头文件（引脚定义、模块汇总）
-│   │   ├── controller.h        # 异常控制逻辑与阈值结构
-│   │   ├── alarm.h             # 报警结构与状态
-│   │   ├── taskschedule.h      # 时间片任务调度
-│   │   ├── thingcloud.h        # 云平台通信与 WiFi 数据结构
-│   │   ├── interface.h         # OLED 界面显示
-│   │   ├── AHT10.h / BH1750.h  # 温湿度 / 光照驱动
+│   ├── Inc/                   # 头文件
+│   │   ├── main.h             # 主程序头文件（引脚定义、模块汇总）
+│   │   ├── controller.h       # 异常控制逻辑与阈值结构
+│   │   ├── alarm.h            # 报警结构与状态
+│   │   ├── taskschedule.h     # 时间片任务调度
+│   │   ├── thingcloud.h       # 云平台通信与 WiFi 数据结构
+│   │   ├── interface.h        # OLED 界面显示
+│   │   ├── AHT10.h / BH1750.h # 温湿度 / 光照驱动
 │   │   ├── DS18B20.h / ntc_3950.h  # 土壤温 / NTC 驱动
-│   │   ├── oled.h / font.h     # OLED 显示与字库
+│   │   ├── oled.h / font.h    # OLED 显示与字库
 │   │   ├── key.h / led.h / Beep.h
 │   │   ├── adc.h / dma.h / i2c.h / tim.h / usart.h / gpio.h
-│   │   ├── delay.h / timeslice.h / customize.h
-│   ├── Src/                    # 源文件
-│   │   ├── main.c              # 程序入口与外设初始化
-│   │   ├── controller.c        # 异常扫描与设备控制决策
-│   │   ├── alarm.c             # 报警执行逻辑
-│   │   ├── taskschedule.c      # 任务组件表与调度器
-│   │   ├── thingcloud.c        # WiFi/MQTT 数据处理与上传
-│   │   ├── interface.c         # OLED 多页界面
-│   │   ├── AHT10.c / BH1750.c  # 传感器驱动实现
+│   │   └── delay.h / timeslice.h / customize.h
+│   ├── Src/                   # 源文件
+│   │   ├── main.c             # 程序入口与外设初始化
+│   │   ├── controller.c       # 异常扫描与设备控制决策
+│   │   ├── alarm.c            # 报警执行逻辑
+│   │   ├── taskschedule.c     # 任务组件表与调度器
+│   │   ├── thingcloud.c       # WiFi/MQTT 数据处理与上传
+│   │   ├── interface.c        # OLED 多页界面
+│   │   ├── AHT10.c / BH1750.c # 传感器驱动实现
 │   │   ├── DS18B20.c / ntc_3950.c
 │   │   ├── oled.c / font.c
 │   │   ├── key.c / led.c / Beep.c
 │   │   ├── adc.c / dma.c / i2c.c / tim.c / usart.c / gpio.c
 │   │   ├── stm32l4xx_hal_msp.c # HAL MSP 初始化
-│   │   ├── stm32l4xx_it.c      # 中断服务函数
-│   │   ├── system_stm32l4xx.c  # 系统时钟配置
-│   │   ├── syscalls.c / sysmem.c
-│   ├── Startup/
+│   │   ├── stm32l4xx_it.c     # 中断服务函数
+│   │   ├── system_stm32l4xx.c # 系统时钟配置
+│   │   └── syscalls.c / sysmem.c
+│   └── Startup/
 │       └── startup_stm32l431rctx.s  # 启动文件
-├── Drivers/                    # HAL 库与 CMSIS
-│   ├── STM32L4xx_HAL_Driver/
-│   └── CMSIS/
-└── Debug/                      # 构建输出
+└── Drivers/                   # HAL 库与 CMSIS
+    ├── STM32L4xx_HAL_Driver/
+    └── CMSIS/
 ```
 
 ## 🧩 软件架构
@@ -162,7 +170,7 @@ CubeIDE/
 | 主程序 | `main.c` | 初始化与主循环 |
 | 异常控制 | `controller.c` / `controller.h` | 阈值判定与设备决策 |
 | 报警 | `alarm.c` / `alarm.h` | 异常蜂鸣报警 |
-| 任务调度 | `taskschedule.c` / `taskslice.h` | 时间片调度器 |
+| 任务调度 | `taskschedule.c` / `timeslice.h` | 时间片调度器 |
 | 云通信 | `thingcloud.c` / `thingcloud.h` | MQTT 上报与下发 |
 | 界面 | `interface.c` / `interface.h` | OLED 多页显示 |
 | AHT10 驱动 | `AHT10.c` / `AHT10.h` | 温湿度采集 |
@@ -189,6 +197,7 @@ CubeIDE/
 - 本工程基于 STM32CubeMX 生成，用户代码集中在 `/* USER CODE BEGIN */` 与 `/* USER CODE END */` 之间，重新生成代码时不会被覆盖
 - 部分传感器（如 CO₂、土壤湿度）当前为占位数值，可按需接入实际传感器
 - 云平台凭证请在部署前替换为自有账号
+- `Debug/` 目录及编译过程中生成的文件（`*.o`、`*.elf`、`*.map`、`*.d`、生成的 Makefile 等）已被 `.gitignore` 忽略，不会提交到版本库；首次用 STM32CubeIDE 打开工程并编译后会自动生成
 
 ## 📜 许可证
 
