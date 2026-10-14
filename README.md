@@ -132,8 +132,8 @@ GEMS/                          # 工程根目录
 
 > ⚠️ 使用前请在 `thingcloud.c` 中替换为你自己的 ThingsCloud `userName` 与 `userPwd`：
 > ```c
-> char userName[]="sxogjo1rkdhgc54j";
-> char userPwd[]="teYOgi0rcZ";
+> char userName[]="****************";
+> char userPwd[]="**********";
 > ```
 
 ## 🚀 快速开始
